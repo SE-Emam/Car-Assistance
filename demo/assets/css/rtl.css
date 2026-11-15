@@ -1,0 +1,25 @@
+/* rtl.css — Arabic (RTL) layout adjustments.
+   Loaded after styles.css; only overrides what dir="rtl" cannot fix by itself.
+   Flex-based layout mirrors automatically — these cover icons/chevrons/arrows. */
+
+/* chevrons point left in RTL, back arrow points right */
+[dir="rtl"] .chev,
+[dir="rtl"] .topbar .back svg { transform: scaleX(-1); }
+
+/* keep Latin-only numerals and codes readable (P0300, km, ratings) */
+[dir="rtl"] .r-title,
+[dir="rtl"] .numeral,
+[dir="rtl"] .dist { direction: ltr; unicode-bidi: embed; }
+
+/* spec values and gold-fact values: keep "140 Nm" / "1,498 cm³" in visual order */
+[dir="rtl"] .facts b,
+[dir="rtl"] .spec-row .v { direction: ltr; unicode-bidi: isolate; text-align: inherit; }
+
+/* chat bubbles: user messages align naturally, cite line follows text flow */
+[dir="rtl"] .bubble .cite { direction: rtl; }
+
+/* code detail hero: FAULT CODE label + numeral read right-to-left */
+[dir="rtl"] .code-hero { text-align: right; }
+
+/* severity filter chips row unchanged (flex); steps list numbering on the right */
+[dir="rtl"] ol.steps { padding-right: 22px; padding-left: 0; }

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>My Garage — Car Assistance</title>
 <link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/rtl.css">
 <style>
   .form { padding: 4px 16px 20px; }
   .form label { display: block; margin: 14px 0 6px; }
@@ -74,15 +75,17 @@
 </div>
 
 <script src="assets/js/data.js"></script>
+<script src="assets/js/i18n.js"></script>
 <script>
+const t = window.t || (s => s);
 const apiBase = ((localStorage.getItem('api_base') || '') + '').replace(/\/+$/, '');
 const TOKEN = localStorage.getItem('ca_token');
 const msg = document.getElementById('msg');
 const show = (kind, text) => { msg.className = 'msg ' + kind; msg.textContent = text; };
 
 document.getElementById('who').textContent = TOKEN
-  ? (localStorage.getItem('ca_email') || 'account') + ' · ' + (apiBase || 'no API configured')
-  : 'not signed in';
+  ? (localStorage.getItem('ca_email') || 'account') + ' · ' + (apiBase || t('no API configured'))
+  : t('not signed in');
 
 /* years + engines from the verified W245 facts */
 const y = document.getElementById('v-year');
@@ -92,10 +95,10 @@ VEHICLE.engines.forEach(x => e.insertAdjacentHTML('beforeend', `<option>${x}</op
 
 function requireAuth() {
   if (TOKEN) return true;
-  show('err', 'You are not signed in.');
+  show('err', t('You are not signed in.'));
   document.getElementById('v-list').innerHTML =
     `<a class="row" href="auth.html"><div class="chip dark"><svg viewBox="0 0 24 24"><path d="M15 3h4v18h-4M10 17l5-5-5-5M15 12H3"/></svg></div>
-     <div class="r-body"><div class="r-title">Sign in to view your garage</div><div class="r-sub">Create an account or sign in</div></div></a>`;
+     <div class="r-body"><div class="r-title">${t('Sign in to view your garage')}</div><div class="r-sub">${t('Create an account or sign in')}</div></div></a>`;
   document.getElementById('f-vehicle').querySelector('button[type=submit]').disabled = true;
   return false;
 }
@@ -106,11 +109,11 @@ function authHeaders() {
 
 async function loadVehicles() {
   if (!requireAuth()) return;
-  if (!apiBase) { show('err', 'Backend not configured — set localStorage["api_base"] (see README).'); return; }
+  if (!apiBase) { show('err', t('Backend not configured — set localStorage["api_base"] (see README).')); return; }
   try {
     const r = await fetch(apiBase + '/api/vehicles', { headers: authHeaders() });
     const data = await r.json().catch(() => ({}));
-    if (r.status === 401) { show('err', 'Session expired — sign in again.'); return; }
+    if (r.status === 401) { show('err', t('Session expired — sign in again.')); return; }
     if (!r.ok) throw new Error(data.message || 'Failed to load');
     document.getElementById('v-list').innerHTML = data.items.length
       ? data.items.map(v => `
@@ -118,11 +121,11 @@ async function loadVehicles() {
             <div class="chip"><svg viewBox="0 0 24 24"><path d="M5 11l2-5h10l2 5"/><rect x="4" y="11" width="16" height="6" rx="1"/><circle cx="8" cy="17" r="1.6"/><circle cx="16" cy="17" r="1.6"/></svg></div>
             <div class="r-body">
               <div class="r-title">${v.make} ${v.model}${v.year ? ' · ' + v.year : ''}</div>
-              <div class="r-sub">${v.engine || 'engine not specified'}</div>
+              <div class="r-sub">${v.engine ? v.engine : t('engine not specified')}</div>
             </div>
           </div>`).join('')
-      : `<div class="row" style="pointer-events:none"><div class="r-body"><div class="r-sub">Garage empty — add your W245 below.</div></div></div>`;
-    if (data.items.length) show('ok', `${data.count} vehicle(s) synced from the live database.`);
+      : `<div class="row" style="pointer-events:none"><div class="r-body"><div class="r-sub">${t('Garage empty — add your W245 below.')}</div></div></div>`;
+    if (data.items.length) show('ok', `${data.count} ${t('vehicle(s) synced from the live database.')}`);
   } catch (err) { show('err', err.message); }
 }
 
@@ -140,7 +143,7 @@ document.getElementById('f-vehicle').addEventListener('submit', async ev => {
     });
     const data = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(data.message || data.error || 'Failed to save');
-    show('ok', 'Saved to your garage ✓');
+    show('ok', t('Saved to your garage ✓'));
     loadVehicles();
   } catch (err) { show('err', err.message); }
 });

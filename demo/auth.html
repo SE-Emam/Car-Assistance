@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sign in — Car Assistance</title>
 <link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/rtl.css">
 <style>
   .form { padding: 20px 16px; }
   .form label { display: block; margin: 14px 0 6px; }
@@ -66,7 +67,9 @@
   </nav>
 </div>
 
+<script src="assets/js/i18n.js"></script>
 <script>
+const t = window.t || (s => s);
 const apiBase = ((localStorage.getItem('api_base') || '') + '').replace(/\/+$/, '');
 const msg = document.getElementById('msg');
 function show(kind, text) { msg.className = 'msg ' + kind; msg.textContent = text; }
@@ -75,7 +78,7 @@ function setMode(mode) {
   document.getElementById('f-signup').classList.toggle('hidden', mode !== 'signup');
   document.getElementById('t-login').style.background = mode === 'login' ? 'var(--mist)' : 'var(--paper)';
   document.getElementById('t-signup').style.background = mode === 'signup' ? 'var(--mist)' : 'var(--paper)';
-  document.getElementById('auth-title').textContent = mode === 'login' ? 'Sign in' : 'Create account';
+  document.getElementById('auth-title').textContent = mode === 'login' ? t('Sign in') : t('Create account');
   msg.className = 'msg';
 }
 document.getElementById('t-login').onclick = () => setMode('login');

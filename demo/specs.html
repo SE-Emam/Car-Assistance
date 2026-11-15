@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Specifications — Car Assistance</title>
 <link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/rtl.css">
 <style>
   .spec-section { margin: 0 16px 10px; }
   .spec-section .micro { display: block; margin: 14px 2px 6px; color: var(--gold-dark, #8a6d1f); }
@@ -58,16 +59,19 @@
 </div>
 
 <script src="assets/js/data.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/i18n.js"></script>
 <script>
 (function () {
+  const t = window.t || (s => s);
   document.getElementById('spec-title').textContent = SPECS.title;
   document.getElementById('spec-years').textContent = SPECS.years;
 
   /* gold instrument-panel facts strip (approved .facts component + markup) */
   const kf = document.getElementById('key-facts');
   const facts = [
-    ['Power', SPECS.key.power], ['Torque', SPECS.key.torque], ['Top speed', SPECS.key.topSpeed],
-    ['Engine', SPECS.key.displacement], ['Fuel', SPECS.key.fuel], ['0–100 km/h', '13.2 s']
+    [t('Power'), SPECS.key.power], [t('Torque'), SPECS.key.torque], [t('Top speed'), SPECS.key.topSpeed],
+    [t('Engine'), SPECS.key.displacement], [t('Fuel'), SPECS.key.fuel], [t('0–100 km/h'), '13.2 s']
   ];
   kf.innerHTML = facts.map(([k, v]) => `<div><div class="micro ice">${k}</div><b>${v}</b></div>`).join('');
 
