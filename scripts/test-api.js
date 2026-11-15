@@ -39,12 +39,20 @@ async function req(path, opts) {
   const r = await req('/api/health');
   t('rate limit headers/mode set', r.headers.get('x-data-mode') !== null);
 
-  /* Phase 2.3 / 3.3 — new endpoints (seed mode expectations) */
-  const ar = await req('/api/auth-register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: 'a@b.c', password: 'longenough1' }) });
-  t('auth-register → 503 without Supabase', ar.status === 503 && ar.body.error === 'supabase_required', ar.body.error);
+  /* Phase 2.3 — auth: expectations depend on data mode (seed = 503, supabase = real flow) */
+  const live = h.body.mode === 'supabase';
+  const rnd = Date.now();
+  const EMAIL = `smoke${rnd}@gmail.com`, PASS = 'smoke-pass-1';
 
-  const al = await req('/api/auth-login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: 'a@b.c', password: 'x' }) });
-  t('auth-login → 503 without Supabase', al.status === 503 && al.body.error === 'supabase_required');
+  const ar = await req('/api/auth-register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: EMAIL, password: PASS, display_name: 'Smoke Test' }) });
+  t(live ? 'auth-register → 201 user created (supabase live)' : 'auth-register → 503 without Supabase',
+    live ? (ar.status === 201 && !!ar.body.user_id) : (ar.status === 503 && ar.body.error === 'supabase_required'),
+    live ? `user_id ${String(ar.body.user_id || '').slice(0, 8)}…` : ar.body.error);
+
+  const al = await req('/api/auth-login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: EMAIL, password: PASS }) });
+  t(live ? 'auth-login → 200 with token (supabase live)' : 'auth-login → 503 without Supabase',
+    live ? (al.status === 200 && !!al.body.access_token) : (al.status === 503 && al.body.error === 'supabase_required'),
+    live ? 'access_token [redacted]' : al.body.error);
 
   const veh = await req('/api/vehicles');
   t('vehicles without token → 503 (no supabase)', [401, 503].includes(veh.status), String(veh.status));
