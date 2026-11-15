@@ -3,6 +3,16 @@
   "rewrites": [
     { "source": "/api/codes/:code", "destination": "/api/codes-detail?code=:code" },
     { "source": "/", "destination": "/demo/index.html" },
-    { "source": "/index.html", "destination": "/demo/index.html" }
+    { "source": "/index.html", "destination": "/demo/index.html" },
+    { "source": "/assets/:path*", "destination": "/demo/assets/:path*" },
+    { "source": "/auth.html", "destination": "/demo/auth.html" },
+    { "source": "/chat.html", "destination": "/demo/chat.html" },
+    { "source": "/code.html", "destination": "/demo/code.html" },
+    { "source": "/codes.html", "destination": "/demo/codes.html" },
+    { "source": "/garage.html", "destination": "/demo/garage.html" },
+    { "source": "/locator.html", "destination": "/demo/locator.html" },
+    { "source": "/mayday.html", "destination": "/demo/mayday.html" },
+    { "source": "/photo.html", "destination": "/demo/photo.html" },
+    { "source": "/specs.html", "destination": "/demo/specs.html" }
   ]
 }

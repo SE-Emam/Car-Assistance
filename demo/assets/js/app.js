@@ -101,23 +101,46 @@ function initCodes() {
   const filtersSec = document.getElementById('code-filters');
   const listSec = document.getElementById('code-list-section');
   const hint = document.getElementById('code-hint');
+  const note = document.getElementById('ws-note');
   let sev = 'ALL';
+
+  /* idle state: browse by system + common codes — search stays primary */
+  function idleHome() {
+    const counts = {};
+    FAULT_CODES.forEach(c => { counts[c.system] = (counts[c.system] || 0) + 1; });
+    const systems = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    const common = ['P0300', 'P0301', 'P0172', 'P0670', 'P0420', 'P0016']
+      .map(id => FAULT_CODES.find(c => c.code === id)).filter(Boolean);
+    return `
+      <span class="micro" style="display:block;margin-bottom:10px">Browse by system</span>
+      <div class="chips">${systems.map(([s, n]) =>
+        `<button class="chip-btn" data-sys="${esc(s)}">${esc(s)} · ${n}</button>`).join('')}</div>
+      <span class="micro" style="display:block;margin:18px 0 8px">Common codes</span>
+      <div class="rows">${common.map(codeRow).join('')}</div>`;
+  }
+
+  list.addEventListener('click', e => {
+    const btn = e.target.closest('[data-sys]');
+    if (btn) { q.value = btn.getAttribute('data-sys'); render(); q.focus(); }
+  });
 
   function render() {
     const term = (q.value || '').trim().toLowerCase();
 
-    /* idle state: search only — nothing else visible */
+    /* idle state: browse — nothing else visible */
     if (!term) {
-      listSec.classList.add('hidden');
       filtersSec.classList.add('hidden');
       if (hint) hint.classList.remove('hidden');
-      list.innerHTML = '';
+      listSec.classList.remove('hidden');
+      if (note) note.textContent = 'Codebook · Mercedes-Benz B-Class (W245) · ' + FAULT_CODES.length + ' codes';
+      list.innerHTML = idleHome();
       return;
     }
 
     listSec.classList.remove('hidden');
     filtersSec.classList.remove('hidden');
     if (hint) hint.classList.add('hidden');
+    if (note) note.textContent = 'Search results · Mercedes-Benz B-Class (W245)';
 
     const items = FAULT_CODES.filter(c => {
       if (sev !== 'ALL' && c.severity !== sev) return false;
