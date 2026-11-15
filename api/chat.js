@@ -17,10 +17,11 @@ function ctxFromChunks(query, chunks) {
   return null;
 }
 
-async function callLLM(message, ctx) {
+async function callLLM(message, ctx, ar) {
   const sys = 'You are Car Assistance, a car fault-diagnosis assistant for a Mercedes-Benz B-Class (W245). ' +
     'Answer ONLY from the provided repair context. If it is insufficient, say so instead of guessing. ' +
-    'Always include the fault code and severity when known.';
+    'Always include the fault code and severity when known.' +
+    (ar ? ' Always reply in Arabic (فصحى مبسطة), keeping fault codes (P0300…) and part names as-is.' : '');
   const user = `Repair context:\n${JSON.stringify({ code: ctx.code, name: ctx.name, severity: ctx.severity, causes: ctx.causes, guide: ctx.guide })}\n\nUser message: ${message}`;
   const r = await fetch(process.env.LLM_API_URL, {
     method: 'POST',
@@ -56,7 +57,7 @@ module.exports = async (req, res) => {
   /* LLM Gateway: external free LLM API when configured */
   if (process.env.LLM_API_URL && process.env.LLM_API_KEY && ctx) {
     try {
-      const reply = await callLLM(message, ctx);
+      const reply = await callLLM(message, ctx, ar);
       return json(res, 200, {
         reply, code: ctx.code || null, severity: ctx.severity || null, dangerous: !!ctx.dangerous,
         cite: ctx.guide ? ctx.guide.source : 'W245 seed corpus', mode: 'llm'
