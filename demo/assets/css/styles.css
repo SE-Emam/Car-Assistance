@@ -1,0 +1,436 @@
+/* ============================================================
+   Car Assistance — Design System stylesheet (v1.0)
+   Mobile-first · Mercedes-Benz-inspired · flat · hairline-structured
+   ============================================================ */
+
+:root {
+  /* colour tokens */
+  --ink: #12214F;        /* deep Mercedes navy (user-approved) */
+  --carbon: #0B1636;     /* darker navy — gradients & pressed states */
+  --paper: #FFFFFF;
+  --mist: #F4F4F4;
+  --line: #E3E3E3;
+  --mut: #6E6E6E;
+  --faint: #9A9A9A;
+  --ice: #C9C9C9;
+  --danger: #C53030;
+  --danger-soft: #FDECEC;
+  --safe: #1F7A5C;
+
+  /* geometry */
+  --r-ctl: 4px;
+  --r-sheet: 8px;
+  --hair: 1px solid var(--line);
+  --ease: 180ms ease-out;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============ layout skeleton ============ */
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  padding-bottom: 76px; /* tabbar clearance */
+}
+
+@media (min-width: 560px) {
+  body { background: var(--mist); }
+  .app {
+    background: var(--paper);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+}
+
+/* ============ typography ============ */
+.display { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
+.title   { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+.mut     { color: var(--mut); }
+.small   { font-size: 13px; }
+
+.micro {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mut);
+}
+.micro.ink { color: var(--ink); }
+.micro.ice { color: var(--faint); }
+
+/* ============ top bar ============ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 16px;
+  background: var(--paper);
+  border-bottom: var(--hair);
+}
+.topbar .back {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: none; border: none; cursor: pointer;
+}
+.topbar .back:active { background: var(--mist); }
+.topbar .back svg { width: 20px; height: 20px; stroke: var(--ink); }
+
+/* ============ sections & rows ============ */
+.section { padding: 20px 16px 4px; }
+.section > .micro { display: block; margin-bottom: 10px; }
+
+.rows { border-top: var(--hair); }
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: var(--hair);
+  text-decoration: none;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background var(--ease);
+  min-height: 48px;
+}
+.row:active { background: var(--mist); }
+.row .r-body { flex: 1; min-width: 0; }
+.row .r-title { font-weight: 600; font-size: 15px; }
+.row .r-sub { font-size: 13px; color: var(--mut); margin-top: 1px; }
+.row .chev { width: 16px; height: 16px; stroke: var(--faint); flex-shrink: 0; }
+
+/* circular icon chip (star-geometry echo) */
+.chip {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--mist);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.chip svg { width: 20px; height: 20px; stroke: var(--ink); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.chip.danger { background: var(--danger-soft); }
+.chip.danger svg { stroke: var(--danger); }
+.chip.dark { background: var(--ink); }
+.chip.dark svg { stroke: #fff; }
+
+/* ============ buttons ============ */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 16px;
+  border: none;
+  border-radius: var(--r-ctl);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--ease);
+}
+.btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; }
+.btn-primary { background: var(--ink); color: #fff; }
+.btn-primary:active { background: var(--carbon); }
+.btn-ghost { background: var(--paper); color: var(--ink); border: 1px solid var(--ink); }
+.btn-ghost:active { background: var(--mist); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:active { background: #a82626; }
+.btn-stack > * + * { margin-top: 10px; }
+
+/* ============ search ============ */
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 14px;
+  background: var(--mist);
+  border-radius: var(--r-ctl);
+}
+.search svg { width: 18px; height: 18px; stroke: var(--mut); fill: none; stroke-width: 1.5; }
+.search input {
+  flex: 1;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  outline: none;
+}
+.search input::placeholder { color: var(--faint); }
+
+/* ============ severity badge ============ */
+.sev {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.sev .dot { width: 8px; height: 8px; border-radius: 50%; }
+.sev-high .dot { background: var(--danger); }
+.sev-high { color: var(--danger); }
+.sev-med .dot { background: var(--ink); }
+.sev-med { color: var(--ink); }
+.sev-low .dot { background: var(--mut); }
+.sev-low { color: var(--mut); }
+
+/* ============ dark bands (statement / code hero / vehicle) ============ */
+.band {
+  background: linear-gradient(160deg, var(--ink) 0%, var(--carbon) 100%);
+  color: #fff;
+  padding: 28px 16px;
+}
+.band .micro { color: var(--faint); }
+.band .display { margin-top: 6px; }
+.band p.ice { color: var(--ice); margin-top: 8px; }
+
+.code-hero { padding: 24px 16px; }
+.code-hero .numeral {
+  font-size: 30px;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  margin-top: 6px;
+}
+.code-hero .name { color: var(--ice); margin-top: 2px; }
+
+/* vehicle facts — golden instrument-panel look (user-approved) */
+.facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(18, 33, 79, 0.25);          /* navy hairlines between cells */
+  border-radius: var(--r-sheet);
+  overflow: hidden;
+  margin-top: 20px;
+}
+.facts div {
+  background: linear-gradient(170deg, #E3C25C 0%, #C9A227 60%, #B08A1E 100%);
+  padding: 14px 8px 12px;
+  text-align: center;
+}
+.facts .micro { margin-bottom: 3px; color: rgba(30, 26, 8, 0.62); }
+.facts b { font-size: 14px; font-weight: 700; color: #12214F; }
+
+/* ============ severity banner on detail page ============ */
+.sev-banner {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 16px;
+  background: var(--mist);
+  border-bottom: var(--hair);
+}
+.sev-banner.crit { background: var(--danger-soft); }
+.sev-banner .dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.sev-banner p { font-size: 14px; }
+.sev-banner.crit p { color: var(--danger); }
+
+/* ============ detail blocks ============ */
+.block { padding: 20px 16px; border-bottom: var(--hair); }
+.block .micro { margin-bottom: 10px; }
+.block p { color: var(--ink); }
+.block p + p { margin-top: 8px; }
+
+.steps { list-style: none; counter-reset: step; }
+.steps li {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: var(--hair);
+  font-size: 14px;
+}
+.steps li:last-child { border-bottom: none; }
+.steps li::before {
+  counter-increment: step;
+  content: counter(step);
+  flex-shrink: 0;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--mist);
+  border: var(--hair);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* source citation line */
+.source {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: var(--hair);
+  font-size: 12px;
+  color: var(--mut);
+}
+
+/* ============ danger sheet (critical + MAYDAY) ============ */
+.sheet-danger { border-top: 3px solid var(--danger); background: var(--danger-soft); }
+.sheet-danger .sd-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.sheet-danger .sd-head svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 1.5; }
+.sheet-danger .sd-body { padding: 16px; }
+.sheet-danger .sd-body p { font-size: 14px; color: var(--ink); margin-bottom: 14px; }
+
+/* ============ chat ============ */
+.chat-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  min-height: calc(100dvh - 52px - 76px - 72px);
+}
+.bubble { max-width: 85%; padding: 10px 14px; border-radius: var(--r-sheet); font-size: 14px; }
+.bubble.user { align-self: flex-end; background: var(--ink); color: #fff; border-bottom-right-radius: 4px; }
+.bubble.bot { align-self: flex-start; background: var(--mist); color: var(--ink); border-bottom-left-radius: 4px; }
+.bubble.bot .cite { display: block; margin-top: 8px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mut); border-top: 1px solid var(--line); padding-top: 6px; }
+.bubble.bot.crit { background: var(--danger-soft); border: 1px solid var(--danger); }
+.typing { align-self: flex-start; display: none; gap: 4px; padding: 12px 14px; background: var(--mist); border-radius: var(--r-sheet); }
+.typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); animation: blink 1.2s infinite; }
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+
+.chat-cta { padding: 12px 16px 16px; position: sticky; bottom: 72px; background: var(--paper); border-top: var(--hair); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips .chip-btn {
+  padding: 9px 14px;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 18px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.chips .chip-btn:active { background: var(--mist); }
+
+/* attachment in chat */
+.bubble.user img { max-width: 100%; max-height: 160px; border-radius: 6px; display: block; margin-bottom: 6px; }
+.bubble.user .att-name { font-size: 11px; opacity: 0.8; }
+
+/* attach button (chat input) */
+.attach-btn {
+  width: 30px; height: 30px;
+  border: none; background: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.attach-btn svg { width: 20px; height: 20px; stroke: var(--mut); fill: none; stroke-width: 1.5; stroke-linecap: round; }
+.attach-btn:active svg { stroke: var(--ink); }
+
+/* empty-state hint under search */
+.hint { padding: 14px 16px 4px; font-size: 14px; color: var(--mut); }
+
+/* ============ photo mock ============ */
+.drop {
+  margin: 16px;
+  border: 1px dashed var(--mut);
+  border-radius: var(--r-sheet);
+  padding: 36px 20px;
+  text-align: center;
+  cursor: pointer;
+}
+.drop svg { width: 36px; height: 36px; stroke: var(--mut); fill: none; stroke-width: 1.5; margin-bottom: 10px; }
+.drop p { color: var(--mut); font-size: 14px; }
+.drop.has-photo { border-style: solid; border-color: var(--ink); padding: 0; overflow: hidden; }
+.drop.has-photo .mock { display: flex; align-items: center; justify-content: center; height: 200px; background: linear-gradient(160deg, var(--carbon), var(--ink)); }
+.drop.has-photo .mock svg { width: 56px; height: 56px; stroke: var(--danger); margin: 0; }
+
+.result-line {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: var(--hair);
+}
+.result-line .r-title { font-weight: 600; font-size: 15px; }
+.result-line .r-sub { font-size: 13px; color: var(--mut); }
+
+/* ============ locator ============ */
+.me-line {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px;
+  background: var(--mist);
+  border-bottom: var(--hair);
+  font-size: 13px;
+  color: var(--mut);
+}
+.me-line svg { width: 16px; height: 16px; stroke: var(--mut); fill: none; stroke-width: 1.5; }
+.dist { font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* ============ mayday page ============ */
+.may-hero { text-align: center; padding: 32px 16px 24px; }
+.may-hero .chip { width: 64px; height: 64px; margin: 0 auto 14px; }
+.may-hero .chip svg { width: 30px; height: 30px; }
+
+/* ============ tabbar ============ */
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  z-index: 30;
+  display: flex;
+  background: var(--paper);
+  border-top: var(--hair);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 9px 0 8px;
+  text-decoration: none;
+  color: var(--mut);
+}
+.tab svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.tab span { font-size: 10px; font-weight: 600; letter-spacing: 0.04em; }
+.tab.active { color: var(--ink); }
+.tab:active { background: var(--mist); }
+
+/* ============ utility ============ */
+.mt8 { margin-top: 8px; } .mt12 { margin-top: 12px; } .mt16 { margin-top: 16px; } .mt24 { margin-top: 24px; }
+.px16 { padding-left: 16px; padding-right: 16px; }
+.center { text-align: center; }
+.hidden { display: none !important; }
+
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Photo Diagnosis — Car Assistance</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <a class="back" href="index.html" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M15 6l-6 6 6 6"/></svg></a>
+    <span class="micro ink">Photo Diagnosis</span>
+  </header>
+
+  <div class="drop" id="drop">
+    <svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4V8z"/><circle cx="12" cy="13" r="3.5"/></svg>
+    <p><b>Tap to add a dashboard photo</b><br><span class="small">Demo mode: a mock warning-light image is analysed by the vision pipeline.</span></p>
+  </div>
+
+  <div class="section hidden" id="photo-analysis">
+    <div class="sev-banner"><span class="dot" style="background:var(--mut)"></span><p>Reading dashboard… detecting warning lamps and text.</p></div>
+  </div>
+
+  <section class="section hidden" id="photo-results">
+    <span class="micro">Vision result · mock VLM</span>
+    <div class="rows">
+      <div class="result-line">
+        <div class="chip danger"><svg viewBox="0 0 24 24"><path d="M12 3L2 21h20L12 3z"/><path d="M12 10v5"/></svg></div>
+        <div class="r-body">
+          <div class="r-title">Detected: flashing warning symbol</div>
+          <div class="r-sub">Engine-shaped lamp · flashing · amber-to-red</div>
+        </div>
+      </div>
+    </div>
+    <div class="block small mut">Mapped to a documented W245 fault code. The vision result is passed to the diagnosis pipeline with the same source-citation rule as text.</div>
+  </section>
+
+  <section class="hidden" id="photo-step2">
+    <div class="section" style="padding-top:0">
+      <span class="micro">Linked diagnosis</span>
+      <div class="rows">
+        <a class="row" href="code.html?code=P0300">
+          <div class="r-body">
+            <div class="r-title" style="font-variant-numeric:tabular-nums">P0300</div>
+            <div class="r-sub">Random/Multiple Cylinder Misfire Detected</div>
+          </div>
+          <span class="sev sev-high"><span class="dot"></span>HIGH</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+        <a class="row" href="locator.html?code=P0300">
+          <div class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="4"/><path d="M12 21c-4-4.5-6-7.5-6-10.5a6 6 0 0112 0C18 13.5 16 16.5 12 21z"/></svg></div>
+          <div class="r-body">
+            <div class="r-title">Find nearest workshop</div>
+            <div class="r-sub">Six documented Cairo workshops, sorted by distance</div>
+          </div>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <div class="mt16"><button class="btn btn-ghost" id="retake">Analyse another photo</button></div>
+    </div>
+  </section>
+
+  <nav class="tabbar">
+    <a class="tab" href="index.html"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span>Home</span></a>
+    <a class="tab" href="chat.html"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/></svg><span>Chat</span></a>
+    <a class="tab" href="mayday.html"><svg viewBox="0 0 24 24"><path d="M12 3L2 21h20L12 3z"/><path d="M12 10v5"/></svg><span>Emergency</span></a>
+  </nav>
+</div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

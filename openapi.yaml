@@ -1,0 +1,147 @@
+openapi: "3.0.3"
+info:
+  title: Car Assistance API
+  version: "0.2.0"
+  description: >
+    Phase 2 API contract. All client traffic enters through this API Gateway
+    (single entry point per the approved architecture). Responses carry an
+    X-Data-Mode header: 'supabase' when the live database is connected,
+    'seed' when serving the bundled W245 dataset.
+servers:
+  - url: http://localhost:3000
+  - url: https://{deployment}/api
+    variables:
+      deployment: { default: car-assistance.vercel.app }
+paths:
+  /api/health:
+    get:
+      summary: Liveness + mode probe
+      responses: { "200": { description: OK } }
+  /api/codes:
+    get:
+      summary: Search fault codes (W245 codebook)
+      parameters:
+        - { name: q, in: query, schema: { type: string }, description: "code, name or system substring" }
+        - { name: severity, in: query, schema: { type: string, enum: [LOW, MEDIUM, HIGH] } }
+        - { name: limit, in: query, schema: { type: integer, maximum: 50, default: 25 } }
+      responses:
+        "200": { description: Code list }
+        "429": { description: Rate limited (30/min default) }
+  /api/codes/{code}:
+    get:
+      summary: Single fault code with repair guide
+      parameters:
+        - { name: code, in: path, required: true, schema: { type: string, example: P0300 } }
+      responses:
+        "200": { description: Code + guide }
+        "404": { description: Unknown code }
+  /api/workshops:
+    get:
+      summary: Nearest workshops (haversine order)
+      parameters:
+        - { name: lat, in: query, schema: { type: number } }
+        - { name: lng, in: query, schema: { type: number } }
+        - { name: limit, in: query, schema: { type: integer, maximum: 20, default: 6 } }
+      responses: { "200": { description: Distance-sorted list } }
+  /api/chat:
+    post:
+      summary: Diagnosis chat (LLM Gateway; scripted fallback)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message: { type: string, example: "Engine shakes at idle" }
+      responses:
+        "200":
+          description: Source-cited diagnosis
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reply: { type: string }
+                  code: { type: string, nullable: true }
+                  severity: { type: string, nullable: true, enum: [LOW, MEDIUM, HIGH, null] }
+                  dangerous: { type: boolean }
+                  cite: { type: string, nullable: true }
+                  mode: { type: string, enum: [llm, scripted] }
+  /api/image-jobs:
+    post:
+      summary: Queue a dashboard photo for VLM analysis
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [storage_path]
+              properties:
+                storage_path: { type: string, example: dashboards/test.png }
+                user_id: { type: string, format: uuid, nullable: true }
+                vehicle_id: { type: string, format: uuid, nullable: true }
+      responses:
+        "202": { description: Job queued }
+  /api/auth-register:
+    post:
+      summary: Create an account (Supabase Auth signUp)
+      responses:
+        "201": { description: Session created }
+        "202": { description: Email confirmation required }
+        "400": { description: Invalid input }
+  /api/auth-login:
+    post:
+      summary: Sign in (Supabase Auth signInWithPassword)
+      responses:
+        "200": { description: Session tokens }
+        "401": { description: Invalid credentials }
+  /api/vehicles:
+    get:
+      summary: My garage — list the user's vehicles (bearer token required)
+      security: [ { apiKey: [] } ]
+      responses:
+        "200": { description: Vehicle list }
+        "401": { description: Unauthorized }
+    post:
+      summary: Add a vehicle (demo scope — B-Class W245 2005–2011)
+      security: [ { apiKey: [] } ]
+      responses:
+        "201": { description: Vehicle created }
+        "400": { description: Missing model / out-of-scope year }
+  /api/rag:
+    post:
+      summary: RAG retrieval (pgvector when configured; documented keyword fallback)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query: { type: string, example: "engine misfire at idle" }
+      responses:
+        "200":
+          description: Chunks with retrieval mode (pgvector | keyword) and took_ms
+  /api/ingest:
+    post:
+      summary: Embed + upsert seeded repair guides into kb_chunks (admin only)
+      parameters:
+        - { name: x-admin-key, in: header, required: false, schema: { type: string } }
+      responses:
+        "200": { description: Embedded count / dry-run }
+        "403": { description: Forbidden }
+        "503": { description: Supabase or embedding API not configured }
+  /api/specs:
+    get:
+      summary: Full technical specifications (W245 B150 reference card)
+      responses:
+        "200": { description: Spec sheet (7 sections · 39 rows + variant list) }
+components:
+  securitySchemes:
+    apiKey: { type: http, scheme: bearer }
+security:
+  - apiKey: []

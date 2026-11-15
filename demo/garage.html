@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My Garage — Car Assistance</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+<style>
+  .form { padding: 4px 16px 20px; }
+  .form label { display: block; margin: 14px 0 6px; }
+  .select { position: relative; }
+  .select select {
+    width: 100%; height: 44px; padding: 0 12px;
+    border: none; border-radius: var(--r-ctl);
+    background: var(--mist); font: inherit; font-size: 15px; color: var(--ink);
+    appearance: none; outline: none;
+  }
+  .select::after {
+    content: ''; position: absolute; right: 14px; top: 17px;
+    border: 4px solid transparent; border-top-color: var(--mut); pointer-events: none;
+  }
+  .msg { margin: 0 16px 8px; padding: 10px 14px; border-radius: var(--r-ctl); font-size: 13px; display: none; }
+  .msg.err { display: block; background: var(--danger-soft); color: var(--danger); }
+  .msg.ok  { display: block; background: #E7F2EC; color: var(--safe); }
+  .badge {
+    display: inline-block; margin-top: 6px; padding: 3px 10px;
+    border: 1px solid var(--line); border-radius: 12px;
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--mut);
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <a class="back" href="index.html" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M15 6l-6 6 6 6"/></svg></a>
+    <span class="micro ink">My Garage</span>
+    <button id="signout" class="chip-btn" style="margin-left:auto;font-size:11px;padding:6px 12px">Sign out</button>
+  </header>
+
+  <div class="band" style="padding:20px 16px">
+    <div class="micro">Signed in as</div>
+    <p class="ice small mt8" id="who">…</p>
+  </div>
+
+  <div class="msg" id="msg"></div>
+
+  <section class="section">
+    <span class="micro">Vehicles</span>
+    <div class="rows" id="v-list"><div class="row" style="pointer-events:none"><div class="r-body"><div class="r-sub">Loading…</div></div></div></div>
+  </section>
+
+  <section class="section">
+    <span class="micro ink">Add your W245</span>
+    <form class="form" id="f-vehicle">
+      <label for="v-year">Model year</label>
+      <div class="select"><select id="v-year">
+        <option value="">Select…</option>
+      </select></div>
+      <label for="v-engine">Engine</label>
+      <div class="select"><select id="v-engine">
+        <option value="">Select…</option>
+      </select></div>
+      <button class="btn btn-primary mt16" type="submit">Add to my garage</button>
+      <p class="small mut mt12">Demo scope: Mercedes-Benz B-Class (W245) 2005–2011 — the seeded codebook matches this model.</p>
+    </form>
+  </section>
+
+  <nav class="tabbar">
+    <a class="tab" href="index.html"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span>Home</span></a>
+    <a class="tab" href="chat.html"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/></svg><span>Chat</span></a>
+    <a class="tab" href="mayday.html"><svg viewBox="0 0 24 24"><path d="M12 3L2 21h20L12 3z"/><path d="M12 10v5"/></svg><span>Emergency</span></a>
+  </nav>
+</div>
+
+<script src="assets/js/data.js"></script>
+<script>
+const apiBase = ((localStorage.getItem('api_base') || '') + '').replace(/\/+$/, '');
+const TOKEN = localStorage.getItem('ca_token');
+const msg = document.getElementById('msg');
+const show = (kind, text) => { msg.className = 'msg ' + kind; msg.textContent = text; };
+
+document.getElementById('who').textContent = TOKEN
+  ? (localStorage.getItem('ca_email') || 'account') + ' · ' + (apiBase || 'no API configured')
+  : 'not signed in';
+
+/* years + engines from the verified W245 facts */
+const y = document.getElementById('v-year');
+for (let i = 2011; i >= 2005; i--) y.insertAdjacentHTML('beforeend', `<option>${i}</option>`);
+const e = document.getElementById('v-engine');
+VEHICLE.engines.forEach(x => e.insertAdjacentHTML('beforeend', `<option>${x}</option>`));
+
+function requireAuth() {
+  if (TOKEN) return true;
+  show('err', 'You are not signed in.');
+  document.getElementById('v-list').innerHTML =
+    `<a class="row" href="auth.html"><div class="chip dark"><svg viewBox="0 0 24 24"><path d="M15 3h4v18h-4M10 17l5-5-5-5M15 12H3"/></svg></div>
+     <div class="r-body"><div class="r-title">Sign in to view your garage</div><div class="r-sub">Create an account or sign in</div></div></a>`;
+  document.getElementById('f-vehicle').querySelector('button[type=submit]').disabled = true;
+  return false;
+}
+
+function authHeaders() {
+  return { 'Content-Type': 'application/json', Authorization: 'Bearer ' + TOKEN };
+}
+
+async function loadVehicles() {
+  if (!requireAuth()) return;
+  if (!apiBase) { show('err', 'Backend not configured — set localStorage["api_base"] (see README).'); return; }
+  try {
+    const r = await fetch(apiBase + '/api/vehicles', { headers: authHeaders() });
+    const data = await r.json().catch(() => ({}));
+    if (r.status === 401) { show('err', 'Session expired — sign in again.'); return; }
+    if (!r.ok) throw new Error(data.message || 'Failed to load');
+    document.getElementById('v-list').innerHTML = data.items.length
+      ? data.items.map(v => `
+          <div class="row" style="pointer-events:none">
+            <div class="chip"><svg viewBox="0 0 24 24"><path d="M5 11l2-5h10l2 5"/><rect x="4" y="11" width="16" height="6" rx="1"/><circle cx="8" cy="17" r="1.6"/><circle cx="16" cy="17" r="1.6"/></svg></div>
+            <div class="r-body">
+              <div class="r-title">${v.make} ${v.model}${v.year ? ' · ' + v.year : ''}</div>
+              <div class="r-sub">${v.engine || 'engine not specified'}</div>
+            </div>
+          </div>`).join('')
+      : `<div class="row" style="pointer-events:none"><div class="r-body"><div class="r-sub">Garage empty — add your W245 below.</div></div></div>`;
+    if (data.items.length) show('ok', `${data.count} vehicle(s) synced from the live database.`);
+  } catch (err) { show('err', err.message); }
+}
+
+document.getElementById('f-vehicle').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  if (!requireAuth() || !apiBase) return;
+  try {
+    const r = await fetch(apiBase + '/api/vehicles', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({
+        model: 'B-Class (W245)',
+        year: parseInt(document.getElementById('v-year').value) || null,
+        engine: document.getElementById('v-engine').value || null
+      })
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(data.message || data.error || 'Failed to save');
+    show('ok', 'Saved to your garage ✓');
+    loadVehicles();
+  } catch (err) { show('err', err.message); }
+});
+
+document.getElementById('signout').onclick = () => {
+  ['ca_token', 'ca_email'].forEach(k => localStorage.removeItem(k));
+  location.href = 'auth.html';
+};
+
+loadVehicles();
+</script>
+</body>
+</html>

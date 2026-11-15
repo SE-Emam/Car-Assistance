@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Specifications — Car Assistance</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+<style>
+  .spec-section { margin: 0 16px 10px; }
+  .spec-section .micro { display: block; margin: 14px 2px 6px; color: var(--gold-dark, #8a6d1f); }
+  .spec-row {
+    display: flex; justify-content: space-between; gap: 12px;
+    padding: 9px 14px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+  .spec-row:first-of-type { border-radius: var(--r-ctl) var(--r-ctl) 0 0; }
+  .spec-row:last-of-type { border-radius: 0 0 var(--r-ctl) var(--r-ctl); }
+  .spec-row + .spec-row { border-top: none; }
+  .spec-row .k { font-size: 13px; color: var(--mut); }
+  .spec-row .v { font-size: 13px; color: var(--ink); text-align: right; font-weight: 500; }
+
+  .variant-list { padding: 4px 16px 8px; }
+  .variant-list .row { pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <a class="back" href="index.html" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M15 6l-6 6 6 6"/></svg></a>
+    <span class="micro ink">Technical specifications</span>
+  </header>
+
+  <div class="band">
+    <div class="micro">VEHICLE FACTS</div>
+    <h1 class="display" id="spec-title" style="font-size:22px;margin-top:6px">…</h1>
+    <p class="ice small" id="spec-years">…</p>
+    <div class="facts" id="key-facts"></div>
+  </div>
+
+  <main id="spec-sections"></main>
+
+  <section class="section">
+    <span class="micro ink">W245 family variants</span>
+    <div class="variant-list" id="variant-list"></div>
+  </section>
+
+  <div class="section">
+    <div class="block small mut">Source: ultimatespecs.com — Mercedes-Benz B-Class (W245) B150 (2005–2008).</div>
+  </div>
+
+  <nav class="tabbar">
+    <a class="tab" href="index.html"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span>Home</span></a>
+    <a class="tab" href="chat.html"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/></svg><span>Chat</span></a>
+    <a class="tab" href="mayday.html"><svg viewBox="0 0 24 24"><path d="M12 3L2 21h20L12 3z"/><path d="M12 10v5"/></svg><span>Emergency</span></a>
+  </nav>
+</div>
+
+<script src="assets/js/data.js"></script>
+<script>
+(function () {
+  document.getElementById('spec-title').textContent = SPECS.title;
+  document.getElementById('spec-years').textContent = SPECS.years;
+
+  /* gold instrument-panel facts strip (approved .facts component + markup) */
+  const kf = document.getElementById('key-facts');
+  const facts = [
+    ['Power', SPECS.key.power], ['Torque', SPECS.key.torque], ['Top speed', SPECS.key.topSpeed],
+    ['Engine', SPECS.key.displacement], ['Fuel', SPECS.key.fuel], ['0–100 km/h', '13.2 s']
+  ];
+  kf.innerHTML = facts.map(([k, v]) => `<div><div class="micro ice">${k}</div><b>${v}</b></div>`).join('');
+
+  document.getElementById('spec-sections').innerHTML = SPECS.sections.map(s => `
+    <section class="spec-section">
+      <span class="micro">${s.title}</span>
+      ${s.rows.map(([k, v]) => `<div class="spec-row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}
+    </section>`).join('');
+
+  document.getElementById('variant-list').innerHTML = SPECS.variants.map(v => `
+    <div class="row"><div class="r-body"><div class="r-title" style="font-size:14px">${v}</div></div></div>`).join('');
+})();
+</script>
+</body>
+</html>

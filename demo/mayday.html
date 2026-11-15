@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MAYDAY — Car Assistance</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <a class="back" href="index.html" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M15 6l-6 6 6 6"/></svg></a>
+    <span class="micro ink">MAYDAY · Roadside Assistance</span>
+  </header>
+
+  <div class="may-hero">
+    <div class="chip danger"><svg viewBox="0 0 24 24"><path d="M12 3L2 21h20L12 3z"/><path d="M12 10v5"/><circle cx="12" cy="17.5" r="0.6" fill="var(--danger)"/></svg></div>
+    <h1 class="display">Get help now.</h1>
+    <p class="mut small mt8">If the diagnosis flagged brakes, steering or fuel as safety-critical, stop driving. One tap below connects you to help.</p>
+  </div>
+
+  <section class="section" style="padding-top:0">
+    <div class="btn-stack">
+      <a class="btn btn-danger" href="tel:+201234567890">
+        <svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-3 2a13 13 0 005 5l2-3 5 2v4a2 2 0 01-2 2A17 17 0 013 6a2 2 0 012-2z"/></svg>
+        Call MAYDAY — Roadside Assistance
+      </a>
+      <a class="btn btn-ghost" href="https://wa.me/201234567890?text=Car%20Assistance%20MAYDAY%20%E2%80%94%20I%20need%20roadside%20help%20with%20my%20Mercedes%20W245" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16v13H8l-4 4V4z"/></svg>
+        WhatsApp MAYDAY
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="micro">While you wait</span>
+    <nav class="rows">
+      <a class="row" href="locator.html">
+        <div class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="4"/><path d="M12 21c-4-4.5-6-7.5-6-10.5a6 6 0 0112 0C18 13.5 16 16.5 12 21z"/></svg></div>
+        <div class="r-body">
+          <div class="r-title">Nearest workshops</div>
+          <div class="r-sub">Sorted by real distance from your position</div>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="row" href="codes.html">
+        <div class="chip"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></div>
+        <div class="r-body">
+          <div class="r-title">Browse fault codes</div>
+          <div class="r-sub">Check severity before deciding to drive</div>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+    </nav>
+  </section>
+
+  <nav class="tabbar">
+    <a class="tab" href="index.html"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span>Home</span></a>
+    <a class="tab" href="chat.html"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/></svg><span>Chat</span></a>
+    <a class="tab active" href="mayday.html"><svg viewBox="0 0 24 24"><path d="M12 3L2 21h20L12 3z"/><path d="M12 10v5"/></svg><span>Emergency</span></a>
+  </nav>
+</div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

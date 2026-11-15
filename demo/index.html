@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Car Assistance — Understand your Mercedes</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- topbar -->
+  <header class="topbar">
+    <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:1.5"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M6 6l12 12M18 6L6 18" stroke-width="0.9"/></svg>
+    <span class="micro ink">Car Assistance</span>
+  </header>
+
+  <!-- statement band -->
+  <div class="band">
+    <div class="micro">Mercedes-Benz B-Class · W245</div>
+    <h1 class="display">Understand what<br>your Mercedes is<br>telling you.</h1>
+    <p class="ice small">Fault codes, symptoms and dashboard photos — explained and cited to documented repair guides. No mechanic knowledge required.</p>
+    <div class="facts" id="engine-facts"></div>
+  </div>
+
+  <!-- quick search — the core purpose, right under the hero -->
+  <section class="section" id="quick-search" style="padding-top:18px">
+    <span class="micro ink">Quick search · fault code</span>
+    <div class="search">
+      <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>
+      <input id="home-search" type="text" placeholder="Search a code… e.g. P0300" autocomplete="off">
+    </div>
+    <div class="hint" id="home-hint" style="padding-left:0;padding-right:0">Type a code (like <b>P0300</b>), a system (like <b>brakes</b>) or a symptom — results appear here instantly.</div>
+    <div class="rows hidden" id="home-results" style="margin-top:10px"></div>
+  </section>
+
+  <!-- three entries -->
+  <section class="section">
+    <span class="micro">More ways to start a diagnosis</span>
+    <nav class="rows">
+      <a class="row" href="#quick-search" id="entry-search">
+        <div class="chip"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></div>
+        <div class="r-body">
+          <div class="r-title">I know the fault code</div>
+          <div class="r-sub">Use the quick search above — or browse the full W245 codebook.</div>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="row" href="chat.html">
+        <div class="chip"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/></svg></div>
+        <div class="r-body">
+          <div class="r-title">I can describe the symptom</div>
+          <div class="r-sub">Tell the assistant what the car is doing, in your own words.</div>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="row" href="photo.html">
+        <div class="chip danger"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4V8z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
+        <div class="r-body">
+          <div class="r-title">I have a photo of the warning</div>
+          <div class="r-sub">Upload a dashboard shot; the warning is read and mapped to a code.</div>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="row" href="mayday.html">
+        <div class="chip dark"><svg viewBox="0 0 24 24"><path d="M12 3L2 21h20L12 3z"/><path d="M12 10v5"/></svg></div>
+        <div class="r-body">
+          <div class="r-title">Emergency</div>
+          <div class="r-sub">One tap to a roadside-assistance call or WhatsApp.</div>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="row" href="specs.html">
+        <div class="chip"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg></div>
+        <div class="r-body">
+          <div class="r-title">Technical specifications</div>
+          <div class="r-sub">Full B150 data — engine, fuel, dimensions, brakes.</div>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="row" href="garage.html">
+        <div class="chip"><svg viewBox="0 0 24 24"><path d="M5 11l2-5h10l2 5"/><rect x="4" y="11" width="16" height="6" rx="1"/><circle cx="8" cy="17" r="1.6"/><circle cx="16" cy="17" r="1.6"/></svg></div>
+        <div class="r-body">
+          <div class="r-title" id="garage-row-title">My garage</div>
+          <div class="r-sub" id="garage-row-sub">Sign in to save your W245</div>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+    </nav>
+  </section>
+
+  <!-- vehicle band -->
+  <section class="section">
+    <span class="micro">Demo vehicle · verified facts</span>
+    <div class="block small mut">
+      Mercedes-Benz B-Class (W245), 2005–2011. Petrol M266 engines (B160–B200 Turbo), diesel OM640 CDI
+      (B180/B200 CDI), B170 NGT. 5/6-speed manual or Autotronic CVT. ESP, ABS and traction control standard.
+    </div>
+  </section>
+
+  <!-- tabbar -->
+  <nav class="tabbar">
+    <a class="tab active" href="index.html"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span>Home</span></a>
+    <a class="tab" href="chat.html"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/></svg><span>Chat</span></a>
+    <a class="tab" href="mayday.html"><svg viewBox="0 0 24 24"><path d="M12 3L2 21h20L12 3z"/><path d="M12 10v5"/></svg><span>Emergency</span></a>
+  </nav>
+</div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
