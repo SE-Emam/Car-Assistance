@@ -44,8 +44,11 @@ module.exports = async (req, res) => {
   mode(res);
   if (req.method !== 'POST') return json(res, 405, { error: 'method_not_allowed' });
 
-  const { message } = await readBody(req);
+  const { message, lang: rawLang } = await readBody(req);
   if (!message || typeof message !== 'string') return json(res, 400, { error: 'missing_message' });
+  const ar = (rawLang || '').toLowerCase() === 'ar';
+  /* Arabic scripted flow (Phase 6) — falls back to English script when absent */
+  const script = (ar && seed.CHAT_SCRIPT_AR) ? seed.CHAT_SCRIPT_AR : seed.CHAT_SCRIPT;
 
   const retrieval = await retrieve(message);
   const ctx = ctxFromChunks(message, retrieval.chunks);
@@ -64,7 +67,7 @@ module.exports = async (req, res) => {
   }
 
   /* scripted fallback (documented W245 patterns) */
-  const rule = seed.CHAT_SCRIPT.rules.find(r => r.match.test(message));
+  const rule = script.rules.find(r => r.match.test(message));
   if (rule) {
     const c = seed.FAULT_CODES.find(x => x.code === rule.code);
     return json(res, 200, {
@@ -72,5 +75,5 @@ module.exports = async (req, res) => {
       dangerous: c ? c.dangerous : false, cite: rule.cite, mode: 'scripted'
     });
   }
-  json(res, 200, { reply: seed.CHAT_SCRIPT.fallback, code: null, severity: null, dangerous: false, cite: null, mode: 'scripted' });
+  json(res, 200, { reply: script.fallback, code: null, severity: null, dangerous: false, cite: null, mode: 'scripted' });
 };

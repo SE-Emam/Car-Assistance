@@ -1,7 +1,12 @@
 /* Regenerates api/_lib/seed.js from demo/assets/js/data.js (single source). */
 const fs = require('fs'), vm = require('vm');
-const src = fs.readFileSync(__dirname + '/../demo/assets/js/data.js', 'utf8');
-const out = vm.runInContext(src + ';({VEHICLE,FAULT_CODES,WORKSHOPS,ME,MAYDAY,CHAT_SCRIPT,SPECS})', vm.createContext({}));
+const load = (f, names) => vm.runInContext(
+  'var window = this; ' + fs.readFileSync(__dirname + f, 'utf8') + ';({ ' + names + ' })', vm.createContext({}));
+const out = load('/../demo/assets/js/data.js', 'VEHICLE,FAULT_CODES,WORKSHOPS,ME,MAYDAY,CHAT_SCRIPT,SPECS');
+/* Arabic overlay (Phase 6): CHAT_SCRIPT_AR + FAULT_CODES_AR join the seed */
+const arCtx = {}; vm.runInContext('var window=this;' + fs.readFileSync(__dirname + '/../demo/assets/js/data-ar.js', 'utf8'), vm.createContext(arCtx));
+out.CHAT_SCRIPT_AR = arCtx.CHAT_SCRIPT_AR;
+out.FAULT_CODES_AR = arCtx.FAULT_CODES_AR;
 const header = '/* AUTO-GENERATED from demo/assets/js/data.js — run: npm run sync-seed. Do not edit by hand. */\n';
 /* serialize with real RegExp literals (JSON.stringify would destroy them) */
 function ser(v) {

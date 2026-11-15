@@ -53,6 +53,11 @@ create table fault_codes (
   dangerous     boolean not null default false, -- true → MAYDAY sheet shown
   make          text not null default 'generic', -- 'generic' | 'mercedes-benz'
   model_scope   text not null default 'all',     -- 'all' | 'W245'
+  /* Arabic localization (Phase 6) — populated by 03-seed-arabic.sql */
+  name_ar       text,
+  system_ar     text,
+  symptoms_ar   jsonb not null default '[]',
+  causes_ar     jsonb not null default '[]',
   created_at    timestamptz not null default now()
 );
 create index fault_codes_code_idx on fault_codes (code);
@@ -69,6 +74,8 @@ create table repair_guides (
   source_ref    text not null,                 -- 'R-01 · W245 common-faults digest'
   verified      boolean not null default false,
   version       int not null default 1,
+  /* Arabic localization (Phase 6) — populated by 03-seed-arabic.sql */
+  steps_ar      jsonb not null default '[]',
   created_at    timestamptz not null default now()
 );
 

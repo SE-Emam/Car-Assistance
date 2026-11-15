@@ -89,6 +89,27 @@ async function req(path, opts) {
   const sp = await req('/api/specs');
   t('specs → B150 sheet (7 sections)', sp.status === 200 && sp.body.item.variant === 'B150' && sp.body.item.sections.length === 7, sp.body.item.sections.length + ' sections');
 
+  /* Phase 6 — Arabic localization (lang=ar) */
+  const arList = await req('/api/codes?q=' + encodeURIComponent('بواجي') + '&lang=ar');
+  t('AR codes search "بواجي" → Arabic glow-plug codes', arList.status === 200 && arList.body.count === 5 &&
+    /[\u0600-\u06FF]/.test(arList.body.items[0].name) && /[\u0600-\u06FF]/.test(arList.body.items[0].system),
+    `${arList.body.count} hits · ${arList.body.items[0] ? arList.body.items[0].name : ''}`);
+  const arCode = await req('/api/codes?q=P0300&lang=ar');
+  t('AR code P0300 name + Arabic symptoms', arCode.status === 200 && arCode.body.count === 1 &&
+    arCode.body.items[0].name.includes('تشويش') && /[\u0600-\u06FF]/.test(arCode.body.items[0].symptoms[0]),
+    arCode.body.items[0] ? arCode.body.items[0].name : 'no item');
+  const arDetail = await req('/api/codes/P0300?lang=ar');
+  t('AR detail P0300 + Arabic guide steps', arDetail.status === 200 && arDetail.body.item.name.includes('تشويش') &&
+    /[\u0600-\u06FF]/.test(arDetail.body.item.guide.steps[0]), 'steps swapped to steps_ar');
+  const enDetail = await req('/api/codes/P0300');
+  t('EN detail P0300 unchanged (no _ar fields leaked)', enDetail.status === 200 &&
+    enDetail.body.item.name === 'Random/Multiple Cylinder Misfire Detected' && !('name_ar' in enDetail.body.item));
+  const arChat = await req('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'لمبة الشيك تومض', lang: 'ar' }) });
+  t('AR chat scripted → P0300 + Arabic reply/cite', arChat.status === 200 && arChat.body.code === 'P0300' &&
+    /[\u0600-\u06FF]/.test(arChat.body.reply) && /[\u0600-\u06FF]/.test(arChat.body.cite || ''), arChat.body.mode);
+  const enChat2 = await req('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'Engine shakes at idle' }) });
+  t('EN chat unchanged when lang absent', enChat2.status === 200 && enChat2.body.code === 'P0300' && !/[\u0600-\u06FF]/.test(enChat2.body.reply));
+
   console.log(fails.length ? `\n${fails.length} FAILED` : '\nALL API SMOKE TESTS PASSED');
   process.exit(fails.length ? 1 : 0);
 })();

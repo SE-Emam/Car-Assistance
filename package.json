@@ -8,7 +8,8 @@
     "sync-seed": "node scripts/sync-seed.js",
     "merge-rag": "node scripts/merge-rag.js",
     "sync-sql": "node scripts/sync-sql.js",
-    "test:api": "node scripts/test-api.js"
+    "test:api": "node scripts/test-api.js",
+    "sync-ar": "node scripts/sync-ar.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"
