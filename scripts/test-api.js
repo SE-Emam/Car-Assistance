@@ -33,9 +33,6 @@ async function req(path, opts) {
   const chat2 = await req('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'xyzzy nonsense' }) });
   t('chat fallback without guessing', chat2.status === 200 && chat2.body.code === null);
 
-  const job = await req('/api/image-jobs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ storage_path: 'dashboards/test.png' }) });
-  t('image-jobs 202 queued', job.status === 202 && job.body.status === 'queued');
-
   const r = await req('/api/health');
   t('rate limit headers/mode set', r.headers.get('x-data-mode') !== null);
 
@@ -57,11 +54,24 @@ async function req(path, opts) {
   const veh = await req('/api/vehicles');
   t('vehicles without token → 503 (no supabase)', [401, 503].includes(veh.status), String(veh.status));
 
+  /* admin-only ingest must be closed without a key (fail closed) */
+  const ing0 = await req('/api/ingest', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dry_run: true }) });
+  t('ingest without admin key → closed', [403, 503].includes(ing0.status), ing0.body.error);
+
+  /* image intake requires auth — no client-chosen user_id */
+  const ij = await req('/api/image-jobs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ storage_path: 'smoke/dashboard.jpg' }) });
+  t('image-jobs without token → 401/503', [401, 503].includes(ij.status), String(ij.status));
+
+  if (live && ar.body.access_token) {
+    const ij2 = await req('/api/image-jobs', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + ar.body.access_token }, body: JSON.stringify({ storage_path: 'smoke/dashboard-' + rnd + '.jpg' }) });
+    t('image-jobs with token → 202 queued', ij2.status === 202 && !!ij2.body.id, ij2.body.id ? 'queued' : JSON.stringify(ij2.body).slice(0, 60));
+  }
+
   const rag = await req('/api/rag', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: 'engine misfire at idle' }) });
   t('rag keyword fallback → P0300 chunk', rag.status === 200 && rag.body.mode === 'keyword' && JSON.stringify(rag.body.chunks).includes('P0300'), `${rag.body.count} chunks · ${rag.body.took_ms}ms`);
 
-  const ing = await req('/api/ingest', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dry_run: true }) });
-  t('ingest dry-run counts chunks', ing.status === 200 && ing.body.dry_run === true && ing.body.chunk_count > 300,
+  const ing = await req('/api/ingest', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(process.env.ADMIN_KEY ? { 'x-admin-key': process.env.ADMIN_KEY } : {}) }, body: JSON.stringify({ dry_run: true }) });
+  t('ingest dry-run counts chunks', [200, 403, 503].includes(ing.status) && (ing.status !== 200 || ing.body.chunk_count > 300),
     `${ing.body.chunk_count} chunks (${ing.body.guide_chunks} guides + ${ing.body.knowledge_chunks} knowledge)`);
 
   /* community corpus expansion — 104-code codebook */

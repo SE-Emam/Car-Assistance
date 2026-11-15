@@ -14,7 +14,11 @@ module.exports = async (req, res) => {
   if (!guard(req, res)) return;
   if (req.method !== 'POST') return json(res, 405, { error: 'method_not_allowed' });
 
-  if (process.env.ADMIN_KEY && (req.headers['x-admin-key'] || '') !== process.env.ADMIN_KEY)
+  /* ingest mutates the knowledge base — admin-only, always.
+     No ADMIN_KEY configured = endpoint closed (fail closed, never open). */
+  if (!process.env.ADMIN_KEY)
+    return json(res, 503, { error: 'admin_required', message: 'Ingest is disabled until ADMIN_KEY is configured.' });
+  if ((req.headers['x-admin-key'] || '') !== process.env.ADMIN_KEY)
     return json(res, 403, { error: 'forbidden' });
 
   const sb = getSupabase();
